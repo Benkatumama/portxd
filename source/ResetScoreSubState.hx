@@ -2,7 +2,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.util.FlxColor;
-import flixel.addons.transition.FlxTransitionableState;
 
 using StringTools;
 
@@ -32,7 +31,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 		if(week > -1) {
 			name = WeekData.weeksLoaded.get(WeekData.weeksList[week]).weekName;
 		}
-		name += ' (' + CoolUtil.difficulties[difficulty] + ')?';
+		name += ' (' + CoolUtil.difficultyStuff[difficulty][0] + ')?';
 
 		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
@@ -69,11 +68,6 @@ class ResetScoreSubState extends MusicBeatSubstate
 		noText.x += 200;
 		add(noText);
 		updateOptions();
-
-		#if android
-		addVirtualPad(LEFT_RIGHT, A_B);
-		addPadCamera();
-		#end
 	}
 
 	override function update(elapsed:Float)
@@ -88,18 +82,13 @@ class ResetScoreSubState extends MusicBeatSubstate
 		if(week == -1) icon.alpha += elapsed * 2.5;
 
 		if(controls.UI_LEFT_P || controls.UI_RIGHT_P) {
-			FlxG.sound.play(Paths.sound('scrollMenu'), 1);
+			FlxG.sound.play(Paths.sound('selection'), 1);
 			onYes = !onYes;
 			updateOptions();
 		}
 		if(controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-			#if android
-                        FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-                        #else
-                        close();
-                        #end
+			close();
 		} else if(controls.ACCEPT) {
 			if(onYes) {
 				if(week == -1) {
@@ -109,12 +98,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 				}
 			}
 			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-			#if android
-                        FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-                        #else
-                        close();
-                        #end
+			close();
 		}
 		super.update(elapsed);
 	}
